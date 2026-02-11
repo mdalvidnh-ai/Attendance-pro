@@ -64,7 +64,7 @@
             padding-bottom: 80px;
         }
         
-        /* DAILY TAB SPECIFIC STYLES - MATCHING SCREENSHOT */
+        /* DAILY TAB SPECIFIC STYLES */
         .daily-view {
             font-family: 'Poppins', sans-serif;
         }
@@ -133,20 +133,20 @@
         }
         
         .daily-stat-box {
-            padding: 16px;
+            padding: 14px;
             border-radius: 16px;
-            text-align: center;
             font-weight: 700;
-            font-size: 15px;
-            letter-spacing: 0.5px;
+            font-size: 13px;
+            letter-spacing: 0.3px;
+            line-height: 1.6;
         }
         
-        .daily-stat-box.boys {
+        .daily-stat-box.present {
             background: rgba(33, 150, 243, 0.8);
             color: white;
         }
         
-        .daily-stat-box.girls {
+        .daily-stat-box.absent {
             background: rgba(156, 39, 176, 0.8);
             color: white;
         }
@@ -154,22 +154,31 @@
         .daily-mark-all-section {
             padding: 0 20px 16px;
             background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
         }
         
-        .daily-mark-all-btn {
-            width: 100%;
-            padding: 16px;
+        .daily-mark-btn {
+            padding: 14px;
             background: white;
-            color: #2196F3;
             border: none;
             border-radius: 12px;
             font-weight: 700;
-            font-size: 15px;
+            font-size: 14px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
             cursor: pointer;
             font-family: 'Poppins', sans-serif;
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        .daily-mark-btn.present {
+            color: #9C27B0;
+        }
+        
+        .daily-mark-btn.absent {
+            color: #9C27B0;
         }
         
         .daily-student-list {
@@ -182,9 +191,6 @@
             border-radius: 16px;
             padding: 16px;
             margin-bottom: 12px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
             box-shadow: 0 2px 8px rgba(0,0,0,0.08);
             border-left: 6px solid #ec407a;
         }
@@ -195,6 +201,13 @@
         
         .daily-student-card.female {
             border-left-color: #ec407a;
+        }
+        
+        .daily-student-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
         }
         
         .daily-student-info h3 {
@@ -242,6 +255,30 @@
             color: white;
             border-color: #f44336;
             box-shadow: 0 4px 12px rgba(244, 67, 54, 0.4);
+        }
+        
+        .remark-box {
+            margin-top: 12px;
+        }
+        
+        .remark-box input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 13px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+        }
+        
+        .remark-box input:focus {
+            outline: none;
+            border-color: #2196F3;
+        }
+        
+        .remark-box input::placeholder {
+            color: #bdbdbd;
+            font-weight: 400;
         }
         
         /* ORIGINAL DESIGN FOR OTHER TABS */
@@ -651,10 +688,10 @@
         <i class="fas fa-moon" id="theme-icon"></i>
     </button>
 
-    <!-- Daily Attendance Tab - SCREENSHOT STYLE -->
+    <!-- Daily Attendance Tab -->
     <div id="tab-daily" class="tab-content active daily-view">
         <div class="daily-top-header">
-            <div class="daily-app-title">SAT V4.3</div>
+            <div class="daily-app-title">SAT V1.0</div>
             <div class="daily-app-subtitle">Student App</div>
             <button class="daily-theme-toggle" onclick="toggleTheme()">
                 <i class="fas fa-moon" id="daily-theme-icon"></i>
@@ -666,17 +703,24 @@
         </div>
 
         <div class="daily-stats-section">
-            <div class="daily-stat-box boys">
-                BOYS P: <span id="boys-present">0</span>
+            <div class="daily-stat-box present">
+                BOYS P: <span id="boys-present">0</span><br>
+                GIRLS P: <span id="girls-present">0</span><br>
+                COMBINE P: <span id="combine-present">0</span>
             </div>
-            <div class="daily-stat-box girls">
-                GIRLS P: <span id="girls-present">0</span>
+            <div class="daily-stat-box absent">
+                BOYS A: <span id="boys-absent">0</span><br>
+                GIRLS A: <span id="girls-absent">0</span><br>
+                COMBINE A: <span id="combine-absent">0</span>
             </div>
         </div>
 
         <div class="daily-mark-all-section">
-            <button class="daily-mark-all-btn" onclick="markAllPresentToday()">
-                MARK ALL PRESENT TODAY
+            <button class="daily-mark-btn present" onclick="markAllToday('present')">
+                MARK ALL PRESENT
+            </button>
+            <button class="daily-mark-btn absent" onclick="markAllToday('absent')">
+                MARK ALL ABSENT
             </button>
         </div>
 
@@ -754,11 +798,11 @@
                 </div>
                 <div class="summary-card gradient-green">
                     <div class="summary-title">Combine Present</div>
-                    <div class="summary-value" id="combine-present">0</div>
+                    <div class="summary-value" id="combine-present-monthly">0</div>
                 </div>
                 <div class="summary-card gradient-red">
                     <div class="summary-title">Combine Absent</div>
-                    <div class="summary-value" id="combine-absent">0</div>
+                    <div class="summary-value" id="combine-absent-monthly">0</div>
                 </div>
             </div>
 
@@ -805,10 +849,10 @@
                 <ul style="color: var(--text-secondary); font-size: 14px; line-height: 1.8; padding-left: 20px;">
                     <li>Upload an Excel or CSV file with columns: <strong>Roll No</strong>, <strong>Student Name</strong>, <strong>Gender</strong></li>
                     <li>Gender should be "Male" or "Female"</li>
-                    <li><strong>Daily Tab:</strong> Mark attendance for today with P/A buttons</li>
+                    <li><strong>Daily Tab:</strong> Mark attendance with P/A buttons and add remarks</li>
                     <li><strong>Monthly Tab:</strong> View full month table - click cells to toggle P/A</li>
                     <li>Data is saved automatically to your device</li>
-                    <li>Install this app to your home screen for offline access</li>
+                    <li>Remarks are useful for noting if a student leaves early</li>
                 </ul>
             </div>
         </div>
@@ -833,15 +877,16 @@
     <script>
         // Initialize Dexie Database
         const db = new Dexie('AttendanceDB');
-        db.version(1).stores({
+        db.version(2).stores({
             students: '++id, rollNo, name, gender',
-            attendance: '++id, date, rollNo, status',
+            attendance: '++id, date, rollNo, status, remark',
             settings: 'key, value'
         });
 
         let deferredPrompt;
         let currentDate = new Date().toISOString().split('T')[0];
         let currentMonth = new Date().toISOString().substring(0, 7);
+        let lastScrollPosition = 0;
 
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
@@ -908,6 +953,9 @@
         }
 
         function switchTab(tabName) {
+            // Save scroll position
+            lastScrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+            
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
             
@@ -979,6 +1027,9 @@
         }
 
         async function loadDailyAttendance() {
+            // Save current scroll position before reload
+            lastScrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+            
             currentDate = document.getElementById('daily-date').value;
             const students = await db.students.toArray();
             const sortedStudents = getSortedStudents(students);
@@ -992,14 +1043,13 @@
                         <p style="margin-top: 8px; font-size: 14px;">Upload data in Setup tab</p>
                     </div>
                 `;
-                document.getElementById('boys-present').textContent = '0';
-                document.getElementById('girls-present').textContent = '0';
+                updateDailyStats(0, 0, 0, 0);
                 return;
             }
 
             listContainer.innerHTML = '';
-            let boysPresent = 0;
-            let girlsPresent = 0;
+            let boysPresent = 0, girlsPresent = 0;
+            let boysAbsent = 0, girlsAbsent = 0;
 
             for (let student of sortedStudents) {
                 const attendance = await db.attendance
@@ -1009,19 +1059,28 @@
                 const card = document.createElement('div');
                 card.className = `daily-student-card ${student.gender.toLowerCase()}`;
                 card.innerHTML = `
-                    <div class="daily-student-info">
-                        <h3>${student.name}</h3>
-                        <p>Roll: ${student.rollNo}</p>
+                    <div class="daily-student-header">
+                        <div class="daily-student-info">
+                            <h3>${student.name}</h3>
+                            <p>Roll: ${student.rollNo}</p>
+                        </div>
+                        <div class="daily-attendance-btns">
+                            <button class="present-btn ${attendance?.status === 'present' ? 'active' : ''}" 
+                                    onclick="markDailyAttendance('${student.rollNo}', 'present')">
+                                P
+                            </button>
+                            <button class="absent-btn ${attendance?.status === 'absent' ? 'active' : ''}"
+                                    onclick="markDailyAttendance('${student.rollNo}', 'absent')">
+                                A
+                            </button>
+                        </div>
                     </div>
-                    <div class="daily-attendance-btns">
-                        <button class="present-btn ${attendance?.status === 'present' ? 'active' : ''}" 
-                                onclick="markDailyAttendance('${student.rollNo}', 'present')">
-                            P
-                        </button>
-                        <button class="absent-btn ${attendance?.status === 'absent' ? 'active' : ''}"
-                                onclick="markDailyAttendance('${student.rollNo}', 'absent')">
-                            A
-                        </button>
+                    <div class="remark-box">
+                        <input type="text" 
+                               placeholder="REMARK" 
+                               value="${attendance?.remark || ''}"
+                               onchange="saveRemark('${student.rollNo}', this.value)"
+                               onclick="event.stopPropagation()">
                     </div>
                 `;
                 listContainer.appendChild(card);
@@ -1029,32 +1088,78 @@
                 if (attendance?.status === 'present') {
                     if (student.gender.toLowerCase() === 'male') boysPresent++;
                     else girlsPresent++;
+                } else if (attendance?.status === 'absent') {
+                    if (student.gender.toLowerCase() === 'male') boysAbsent++;
+                    else girlsAbsent++;
                 }
             }
 
-            document.getElementById('boys-present').textContent = boysPresent;
-            document.getElementById('girls-present').textContent = girlsPresent;
+            updateDailyStats(boysPresent, girlsPresent, boysAbsent, girlsAbsent);
+            
+            // Restore scroll position after a short delay
+            setTimeout(() => {
+                window.scrollTo(0, lastScrollPosition);
+            }, 100);
+        }
+
+        function updateDailyStats(boysP, girlsP, boysA, girlsA) {
+            document.getElementById('boys-present').textContent = boysP;
+            document.getElementById('girls-present').textContent = girlsP;
+            document.getElementById('combine-present').textContent = boysP + girlsP;
+            document.getElementById('boys-absent').textContent = boysA;
+            document.getElementById('girls-absent').textContent = girlsA;
+            document.getElementById('combine-absent').textContent = boysA + girlsA;
         }
 
         async function markDailyAttendance(rollNo, status) {
+            // Save scroll position
+            lastScrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+            
+            const existing = await db.attendance.where({ date: currentDate, rollNo: rollNo }).first();
             await db.attendance.where({ date: currentDate, rollNo: rollNo }).delete();
+            
             await db.attendance.add({
                 date: currentDate,
                 rollNo: rollNo,
-                status: status
+                status: status,
+                remark: existing?.remark || ''
             });
+            
             loadDailyAttendance();
         }
 
-        async function markAllPresentToday() {
+        async function saveRemark(rollNo, remark) {
+            const existing = await db.attendance.where({ date: currentDate, rollNo: rollNo }).first();
+            
+            if (existing) {
+                await db.attendance.where({ date: currentDate, rollNo: rollNo }).delete();
+                await db.attendance.add({
+                    date: currentDate,
+                    rollNo: rollNo,
+                    status: existing.status,
+                    remark: remark
+                });
+            } else {
+                await db.attendance.add({
+                    date: currentDate,
+                    rollNo: rollNo,
+                    status: '',
+                    remark: remark
+                });
+            }
+        }
+
+        async function markAllToday(status) {
             const students = await db.students.toArray();
             
             for (let student of students) {
+                const existing = await db.attendance.where({ date: currentDate, rollNo: student.rollNo }).first();
                 await db.attendance.where({ date: currentDate, rollNo: student.rollNo }).delete();
                 await db.attendance.add({
                     date: currentDate,
                     rollNo: student.rollNo,
-                    status: 'present'
+                    status: status,
+                    remark: existing?.remark || ''
                 });
             }
 
@@ -1151,7 +1256,12 @@
             }
 
             if (newStatus !== '') {
-                await db.attendance.add({ date: date, rollNo: rollNo, status: newStatus });
+                await db.attendance.add({ 
+                    date: date, 
+                    rollNo: rollNo, 
+                    status: newStatus,
+                    remark: existing?.remark || ''
+                });
             }
 
             loadMonthlyAttendance();
@@ -1200,8 +1310,8 @@
             document.getElementById('total-absent-boys').textContent = boysAbsentTotal;
             document.getElementById('total-present-girls').textContent = girlsPresentTotal;
             document.getElementById('total-absent-girls').textContent = girlsAbsentTotal;
-            document.getElementById('combine-present').textContent = boysPresentTotal + girlsPresentTotal;
-            document.getElementById('combine-absent').textContent = boysAbsentTotal + girlsAbsentTotal;
+            document.getElementById('combine-present-monthly').textContent = boysPresentTotal + girlsPresentTotal;
+            document.getElementById('combine-absent-monthly').textContent = boysAbsentTotal + girlsAbsentTotal;
             document.getElementById('boys-percentage').textContent = boysPercentage + '%';
             document.getElementById('girls-percentage').textContent = girlsPercentage + '%';
 
@@ -1232,15 +1342,17 @@
             const prevMonthPresent = parseInt(document.getElementById('prev-month-present').value) || 0;
 
             for (let student of sortedStudents) {
-                let row = {
-                    'Roll No': student.rollNo,
-                    'Student Name': student.name,
-                    'Gender': student.gender
-                };
+                let row = {};
+                
+                // First three columns - exactly as in table
+                row['Roll No'] = student.rollNo;
+                row['Student Name'] = student.name;
+                row['Gender'] = student.gender;
 
                 let totalPresent = 0;
                 let totalAbsent = 0;
 
+                // Then all the day columns
                 for (let day = 1; day <= daysInMonth; day++) {
                     const dateStr = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
                     const attendance = await db.attendance
@@ -1254,15 +1366,38 @@
                     if (status === 'A') totalAbsent++;
                 }
 
-                row['TOTAL PRESENT'] = totalPresent;
-                row['TOTAL ABSENT'] = totalAbsent;
-                row['PREVIOUS MONTH PRESENT'] = prevMonthPresent;
-                row['COMBINE PRESENT'] = totalPresent + prevMonthPresent;
+                // Last four columns - exactly as in table
+                row['Total Present'] = totalPresent;
+                row['Total Absent'] = totalAbsent;
+                row['Previous Month Present'] = prevMonthPresent;
+                row['Combine Present'] = totalPresent + prevMonthPresent;
 
                 data.push(row);
             }
 
             const ws = XLSX.utils.json_to_sheet(data);
+            
+            // Apply styling to make it look like the table
+            const range = XLSX.utils.decode_range(ws['!ref']);
+            
+            // Set column widths
+            ws['!cols'] = [
+                { wch: 8 },  // Roll No
+                { wch: 25 }, // Student Name
+                { wch: 10 }, // Gender
+            ];
+            
+            // Add width for day columns
+            for (let i = 0; i < daysInMonth; i++) {
+                ws['!cols'].push({ wch: 3 });
+            }
+            
+            // Add width for summary columns
+            ws['!cols'].push({ wch: 12 }); // Total Present
+            ws['!cols'].push({ wch: 12 }); // Total Absent
+            ws['!cols'].push({ wch: 18 }); // Previous Month
+            ws['!cols'].push({ wch: 15 }); // Combine Present
+
             const wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, ws, 'Attendance');
             XLSX.writeFile(wb, `Attendance_${currentMonth}.xlsx`);
@@ -1270,7 +1405,7 @@
 
         async function exportPDF() {
             const { jsPDF } = window.jspdf;
-            const doc = new jsPDF('l', 'mm', 'a4');
+            const doc = new jsPDF('l', 'mm', 'a4'); // Landscape orientation
 
             const currentMonth = document.getElementById('attendance-month').value;
             const [year, month] = currentMonth.split('-').map(Number);
@@ -1282,11 +1417,17 @@
             const prevMonthPresent = parseInt(document.getElementById('prev-month-present').value) || 0;
 
             for (let student of sortedStudents) {
-                let row = [student.rollNo, student.name, student.gender];
+                let row = [];
+                
+                // First three columns - exactly as in table
+                row.push(student.rollNo);
+                row.push(student.name);
+                row.push(student.gender);
 
                 let totalPresent = 0;
                 let totalAbsent = 0;
 
+                // Then all the day columns
                 for (let day = 1; day <= daysInMonth; day++) {
                     const dateStr = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
                     const attendance = await db.attendance
@@ -1300,30 +1441,82 @@
                     if (status === 'A') totalAbsent++;
                 }
 
-                row.push(totalPresent, totalAbsent, prevMonthPresent, totalPresent + prevMonthPresent);
+                // Last four columns - exactly as in table
+                row.push(totalPresent);
+                row.push(totalAbsent);
+                row.push(prevMonthPresent);
+                row.push(totalPresent + prevMonthPresent);
+
                 tableData.push(row);
             }
 
-            let headers = [['Roll', 'Name', 'Gender']];
+            // Build header - exactly as in table
+            let headers = [['Roll No', 'Student Name', 'Gender']];
+            
+            // Add day headers
             for (let day = 1; day <= daysInMonth; day++) {
-                headers[0].push(day);
+                headers[0].push(day.toString());
             }
-            headers[0].push('Total P', 'Total A', 'Prev M', 'Combine');
+            
+            // Add summary headers
+            headers[0].push('Total Present');
+            headers[0].push('Total Absent');
+            headers[0].push('Previous Month Present');
+            headers[0].push('Combine Present');
 
+            // Add title
             doc.setFontSize(16);
+            doc.setFont('helvetica', 'bold');
             doc.text(`Attendance Report - ${currentMonth}`, 14, 15);
 
+            // Create table
             doc.autoTable({
                 head: headers,
                 body: tableData,
                 startY: 25,
                 theme: 'grid',
-                styles: { fontSize: 7, cellPadding: 1 },
-                headStyles: { fillColor: [59, 130, 246], fontStyle: 'bold' },
+                styles: { 
+                    fontSize: 7, 
+                    cellPadding: 1,
+                    halign: 'center',
+                    valign: 'middle'
+                },
+                headStyles: { 
+                    fillColor: [59, 130, 246],
+                    fontStyle: 'bold',
+                    fontSize: 7,
+                    halign: 'center'
+                },
                 columnStyles: {
-                    0: { cellWidth: 12 },
-                    1: { cellWidth: 35 },
-                    2: { cellWidth: 15 }
+                    0: { cellWidth: 12, halign: 'center' },  // Roll No
+                    1: { cellWidth: 35, halign: 'left' },    // Student Name
+                    2: { cellWidth: 15, halign: 'center' }   // Gender
+                },
+                didParseCell: function(data) {
+                    // Style the summary columns at the end
+                    const colIndex = data.column.index;
+                    const totalCols = 3 + daysInMonth + 4; // 3 info cols + days + 4 summary cols
+                    
+                    // Highlight Total Present column (green)
+                    if (colIndex === totalCols - 4 && data.row.section === 'body') {
+                        data.cell.styles.fillColor = [220, 252, 231]; // Light green
+                        data.cell.styles.textColor = [22, 163, 74]; // Dark green
+                        data.cell.styles.fontStyle = 'bold';
+                    }
+                    
+                    // Highlight Total Absent column (red)
+                    if (colIndex === totalCols - 3 && data.row.section === 'body') {
+                        data.cell.styles.fillColor = [254, 226, 226]; // Light red
+                        data.cell.styles.textColor = [220, 38, 38]; // Dark red
+                        data.cell.styles.fontStyle = 'bold';
+                    }
+                    
+                    // Highlight Combine Present column (blue)
+                    if (colIndex === totalCols - 1 && data.row.section === 'body') {
+                        data.cell.styles.fillColor = [219, 234, 254]; // Light blue
+                        data.cell.styles.textColor = [59, 130, 246]; // Blue
+                        data.cell.styles.fontStyle = 'bold';
+                    }
                 }
             });
 
